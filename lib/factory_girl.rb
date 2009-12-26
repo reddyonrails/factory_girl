@@ -21,7 +21,15 @@ def Factory (name, attrs = {})
   Factory.default_strategy(name, attrs)
 end
 
-if defined? Rails.configuration
+# I don't want to rescue entire if-else below
+rails_configuration = true
+begin
+  Rails.configuration
+rescue NoMethodError
+  rails_configuration = false
+end
+
+if rails_configuration
   Rails.configuration.after_initialize do
     Factory.definition_file_paths = [
       File.join(RAILS_ROOT, 'test', 'factories'),
